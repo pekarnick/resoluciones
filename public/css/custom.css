@@ -1,0 +1,29 @@
+/*------------------------------------------------------------------
+
+[Custom Stylesheet]
+
+
+Last change:	03/25/2013
+Assigned to:	You
+
+-------------------------------------------------------------------*/
+ul li.error {
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: capitalize;
+    color: #FF0000;
+    margin: 15px 0;
+}
+.col-checkbox {
+    width: 15px;
+    vertical-align: top;
+}
+.col-checkbox input {
+    vertical-align: top;
+}
+#nuevo-tipo {
+    cursor: pointer;
+}
+#nuevo-tag {
+    cursor: pointer;
+}
