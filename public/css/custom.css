@@ -27,3 +27,6 @@ ul li.error {
 #nuevo-tag {
     cursor: pointer;
 }
+.flash {
+    text-align: center;
+}

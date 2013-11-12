@@ -55,7 +55,7 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'c1_resolucionesdb',
+			'database'  => 'c1_b1pdb',
 			'username'  => 'c1_usuario',
 			'password'  => 'servtec',
 			'charset'   => 'utf8',

@@ -7,11 +7,11 @@
 @section('titulo')
     <div class="widget-header">
         <i class="icon-tags"></i>
-        <h3>Tipos de Resolución</h3>
+        <h3>Categorías</h3>
     </div> <!-- /widget-header -->
 @stop
 @section('main')
-<p>{{ link_to_route('tipos.create', 'Nuevo Tipo de Resolución', null, array('class' => 'btn btn-large btn-primary')) }}</p>
+<p>{{ link_to_route('tipos.create', 'Nueva Categoría', null, array('class' => 'btn btn-large btn-primary')) }}</p>
 
 @if ($tipos->count())
 	<table class="table table-hover table-condensed">

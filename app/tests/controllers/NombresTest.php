@@ -3,11 +3,11 @@
 use Mockery as m;
 use Way\Tests\Factory;
 
-class TweetsTest extends TestCase {
+class NombresTest extends TestCase {
 
 	public function __construct()
 	{
-		$this->mock = m::mock('Eloquent', 'Tweet');
+		$this->mock = m::mock('Eloquent', 'Nombre');
 		$this->collection = m::mock('Illuminate\Database\Eloquent\Collection')->shouldDeferMissing();
 	}
 
@@ -15,8 +15,8 @@ class TweetsTest extends TestCase {
 	{
 		parent::setUp();
 
-		$this->attributes = Factory::tweet(['id' => 1]);
-		$this->app->instance('Tweet', $this->mock);
+		$this->attributes = Factory::nombre(['id' => 1]);
+		$this->app->instance('Nombre', $this->mock);
 	}
 
 	public function tearDown()
@@ -27,14 +27,14 @@ class TweetsTest extends TestCase {
 	public function testIndex()
 	{
 		$this->mock->shouldReceive('all')->once()->andReturn($this->collection);
-		$this->call('GET', 'tweets');
+		$this->call('GET', 'nombres');
 
-		$this->assertViewHas('tweets');
+		$this->assertViewHas('nombres');
 	}
 
 	public function testCreate()
 	{
-		$this->call('GET', 'tweets/create');
+		$this->call('GET', 'nombres/create');
 
 		$this->assertResponseOk();
 	}
@@ -43,18 +43,18 @@ class TweetsTest extends TestCase {
 	{
 		$this->mock->shouldReceive('create')->once();
 		$this->validate(true);
-		$this->call('POST', 'tweets');
+		$this->call('POST', 'nombres');
 
-		$this->assertRedirectedToRoute('tweets.index');
+		$this->assertRedirectedToRoute('nombres.index');
 	}
 
 	public function testStoreFails()
 	{
 		$this->mock->shouldReceive('create')->once();
 		$this->validate(false);
-		$this->call('POST', 'tweets');
+		$this->call('POST', 'nombres');
 
-		$this->assertRedirectedToRoute('tweets.create');
+		$this->assertRedirectedToRoute('nombres.create');
 		$this->assertSessionHasErrors();
 		$this->assertSessionHas('message');
 	}
@@ -66,9 +66,9 @@ class TweetsTest extends TestCase {
 				   ->once()
 				   ->andReturn($this->attributes);
 
-		$this->call('GET', 'tweets/1');
+		$this->call('GET', 'nombres/1');
 
-		$this->assertViewHas('tweet');
+		$this->assertViewHas('nombre');
 	}
 
 	public function testEdit()
@@ -79,9 +79,9 @@ class TweetsTest extends TestCase {
 				   ->once()
 				   ->andReturn($this->collection);
 
-		$this->call('GET', 'tweets/1/edit');
+		$this->call('GET', 'nombres/1/edit');
 
-		$this->assertViewHas('tweet');
+		$this->assertViewHas('nombre');
 	}
 
 	public function testUpdate()
@@ -91,18 +91,18 @@ class TweetsTest extends TestCase {
 				   ->andReturn(m::mock(['update' => true]));
 
 		$this->validate(true);
-		$this->call('PATCH', 'tweets/1');
+		$this->call('PATCH', 'nombres/1');
 
-		$this->assertRedirectedTo('tweets/1');
+		$this->assertRedirectedTo('nombres/1');
 	}
 
 	public function testUpdateFails()
 	{
 		$this->mock->shouldReceive('find')->with(1)->andReturn(m::mock(['update' => true]));
 		$this->validate(false);
-		$this->call('PATCH', 'tweets/1');
+		$this->call('PATCH', 'nombres/1');
 
-		$this->assertRedirectedTo('tweets/1/edit');
+		$this->assertRedirectedTo('nombres/1/edit');
 		$this->assertSessionHasErrors();
 		$this->assertSessionHas('message');
 	}
@@ -111,7 +111,7 @@ class TweetsTest extends TestCase {
 	{
 		$this->mock->shouldReceive('find')->with(1)->andReturn(m::mock(['delete' => true]));
 
-		$this->call('DELETE', 'tweets/1');
+		$this->call('DELETE', 'nombres/1');
 	}
 
 	protected function validate($bool)

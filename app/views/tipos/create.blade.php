@@ -8,7 +8,7 @@
 @section('titulo')
     <div class="widget-header">
         <i class="icon-tags"></i>
-        <h3>Nuevo Tipo de Resolución</h3>
+        <h3>Nueva Categoría</h3>
     </div> <!-- /widget-header -->
 @stop
 @section('main')

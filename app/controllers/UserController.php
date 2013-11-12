@@ -131,6 +131,7 @@ class UserController extends BaseController {
         }
         else
         {
+            View::share('titulopagina', 'Login');
             return View::make('confide.login');
         }
     }

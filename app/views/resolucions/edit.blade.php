@@ -8,7 +8,7 @@
 @section('titulo')
     <div class="widget-header">
         <i class="icon-pencil"></i>
-        <h3>Nueva Resolución</h3>
+        <h3>Editar {{ $tipocarga }}</h3>
     </div> <!-- /widget-header -->
 @stop
 
