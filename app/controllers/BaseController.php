@@ -2,7 +2,6 @@
 class BaseController extends Controller {
 
         public $usuarioactual;
-        public $titulopagina;
         /**
 	 * Setup the layout used by the controller.
 	 *
@@ -12,9 +11,6 @@ class BaseController extends Controller {
 		if ( ! is_null($this->layout)) {
 			$this->layout = View::make($this->layout);
 		}
-                $this->titulopagina = 'DOCUMENTOS';
-                View::share('titulopagina', $this->titulopagina);
-                View::share('tema', 'themetwo'); //themeone themetwo themethree
 	}
         public function controlar_usuario($permission = null, $rol = null, $excepciones = array(), $controlador = null) {
             if(!empty($excepciones)) {

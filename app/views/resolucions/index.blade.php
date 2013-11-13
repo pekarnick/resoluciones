@@ -85,7 +85,7 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <a href="#" onclick="document.form1.submit(); return false;" class="btn btn-success">Buscar</a>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="/restablecerbuscador" class="btn">Mostrar todas</a>
+                    <a href="/restablecerbuscador" class="btn">Mostrar todos</a>
                 </td>
             </tr>
         </table>

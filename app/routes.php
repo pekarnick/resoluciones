@@ -63,22 +63,21 @@ Route::get( 'user/reset/{token}',          'UserController@getReset');
 //    }
 //});
 
-//App::error(function($exception, $code)
-//{
-//    View::share('tema', 'themetwo'); //themeone themetwo themethree
-//    switch ($code)
-//    {
-//        case 403:
-//            return Response::view('errors.403', array(), 403);
-//            break;
-//        case 404:
-//            return Response::view('errors.404', array(), 404);
-//            break;
-//        case 500:
-//            return Response::view('errors.500', array(), 500);
-//            break;
-//        default:
-//            return Response::view('errors.default', array(), $code);
-//            break;
-//    }
-//});
+App::error(function($exception, $code)
+{
+    switch ($code)
+    {
+        case 403:
+            return Response::view('errors.403', array(), 403);
+            break;
+        case 404:
+            return Response::view('errors.404', array(), 404);
+            break;
+        case 500:
+            return Response::view('errors.500', array(), 500);
+            break;
+        default:
+            return Response::view('errors.default', array(), $code);
+            break;
+    }
+});

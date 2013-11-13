@@ -11,9 +11,9 @@
 |
 */
 
-App::before(function($request)
-{
-	//
+App::before(function($request) {
+    View::share('titulopagina', 'DOCUMENTOS');
+    View::share('tema', 'themeone'); //themeone themetwo themethree
 });
 
 
