@@ -7,12 +7,12 @@
 @section('titulo')
     <div class="widget-header">
         <i class="icon-pencil"></i>
-        <h3>Resoluciones</h3>
+        <h3>Documentos</h3>
     </div> <!-- /widget-header -->
 @stop
 @section('main')
 @if((strtolower($rolusuario) == 'administrador') || (strtolower($rolusuario) == 'usuarios') || (strtolower($rolusuario) == 'jefe - director'))
-    <p>{{ link_to_action('ResolucionsController@create', 'Cargar Resolución', null, array('class' => 'btn btn-large btn-primary')) }}</p>
+    <p>{{ link_to_action('ResolucionsController@create', 'Cargar Resolución', array('tipo' => 'R'), array('class' => 'btn btn-large btn-primary')) }} {{ link_to_action('ResolucionsController@create', 'Cargar Memorándum', array('tipo' => 'M'), array('class' => 'btn btn-large btn-secondary')) }} {{ link_to_action('ResolucionsController@create', 'Cargar Disposición', array('tipo' => 'D'), array('class' => 'btn btn-large btn-primary')) }}</p> 
 @endif
 <fieldset>
     <legend>Buscar</legend>
@@ -41,7 +41,7 @@
                     {{ Form::select('anio', $anios, $anio) }}
                 </td>
                 <td>
-                    {{ Form::label('tipo_id', 'Tipo:') }}
+                    {{ Form::label('tipo_id', 'Categoría:') }}
                     {{ Form::select('tipo_id', $listipos, Session::get('busqueda.tipo_id')) }}
                 </td>
             </tr>
@@ -70,7 +70,8 @@
                     {{ Form::select('user_id', $usuarios, Session::get('busqueda.user_id')) }}
                 </td>
                 <td>
-                    &nbsp;
+                    {{ Form::label('documento', 'Tipo:') }}
+                    {{ Form::select('documento', array('' => '-- Seleccione --','Resolución' => 'Resolución','Disposición' => 'Disposición','Memorándum' => 'Memorándum'), Session::get('busqueda.documento')) }}
                 </td>
             </tr>
             <tr>
@@ -84,7 +85,7 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <a href="#" onclick="document.form1.submit(); return false;" class="btn btn-success">Buscar</a>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="/restablecerbuscador" class="btn">Mostrar todas</a>
+                    <a href="/restablecerbuscador" class="btn">Mostrar todos</a>
                 </td>
             </tr>
         </table>
@@ -96,8 +97,8 @@
 		<thead>
 			<tr>
 				<th>Número</th>
-				<th>Tipo de resolución</th>
-				<th>Fecha</th>
+                                <th>Fecha</th>
+				<th>Tipo<br />Categoría</th>
 				<th>Resuelve</th>
 				<th>Archivo</th>
                                 <th>Iniciales</th>
@@ -109,9 +110,12 @@
 			@foreach ($resolucions as $resolucion)
 				<tr>
 					<td>{{{ $resolucion->numero }}}</td>
-					<td>{{{ $resolucion->tipo_de_resolucion }}}</td>
                                         <?php $dia = explode('-', $resolucion->fecha); ?>
 					<td>{{{ $dia[2].'/'.$dia[1].'/'.$dia[0] }}}</td>
+					<td>
+                                            {{{ $resolucion->documento }}}<br />
+                                            {{{ $resolucion->tipo_de_resolucion }}}
+                                        </td>
 					<td>{{{ $resolucion->resuelve }}}</td>
                                         <td>{{ link_to('descarga/'.str_replace('/', '-', $resolucion->archivo).'/DVP-'.$resolucion->numero, 'Descargar', $attributes = array('target' => '_blank','class' => 'btn btn-warning btn-xs'), $secure = null) }}</td>
 					<td>{{{ $resolucion->iniciales }}}</td>

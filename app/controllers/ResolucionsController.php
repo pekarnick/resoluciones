@@ -57,6 +57,9 @@ class ResolucionsController extends BaseController {
             if(!empty($input['tags'])) {
                 Session::put('busqueda.tags', $input['tags']);
             }
+            if(!empty($input['documento'])) {
+                Session::put('busqueda.documento', $input['documento']);
+            }
         }
         $res = DB::table('resolucions')->leftJoin('tipos', 'resolucions.tipo_id', '=', 'tipos.id')
                                        ->leftJoin('users', 'resolucions.user_id', '=', 'users.id')
@@ -107,19 +110,23 @@ class ResolucionsController extends BaseController {
         if(Session::get('busqueda.user_id') != null) {
             $res->where('resolucions.user_id', '=', Session::get('busqueda.user_id'));
         }
+        if(Session::get('busqueda.documento') != null) {
+            $res->where('resolucions.documento', '=', Session::get('busqueda.documento'));
+        }
         $res->orderBy('resolucions.id', 'desc');
         $res->groupBy('resolucions.id');
+        
         $resolucions = $res->paginate(20,array(
-           'resolucions.id', "resolucions.numero", "resolucions.fecha", "resolucions.resuelve", "resolucions.archivo", "resolucions.iniciales",
+           'resolucions.id', "resolucions.numero", "resolucions.fecha", "resolucions.resuelve", "resolucions.archivo", "resolucions.iniciales", "resolucions.documento",
            'tipos.nombre as tipo_de_resolucion',
            'users.nombre_y_apellido as usuario',
            'users.id as userid'
         ));
 
         $listipos = Tipo::lists('nombre', 'id');
-        $listipos = array('' => '--- Seleccione el tipo ---') + $listipos;
-        $resolutores = Resolucion::lists('resuelve','resuelve');
-        $resolutores = array('' => '--- ¿Quién resuelve? ---') + $resolutores;
+        $listipos = array('' => '--- Seleccione categoría ---') + $listipos;
+//        $resolutores = DB::table('nombres')->lists('nombre','nombre');
+//        $resolutores = array('' => '--- ¿Quién resuelve? ---') + $resolutores;
         $usuarios = User::lists('nombre_y_apellido','id');
         $usuarios = array('' => '--- Seleccione usuario ---') + $usuarios;
         $anioslog = date('Y') - 20;
@@ -128,7 +135,7 @@ class ResolucionsController extends BaseController {
             $anios[$anioslog] = $anioslog;
             $anioslog++;
         }
-        return View::make('resolucions.index', compact('resolucions','listipos','resolutores','usuarios','anios'));
+        return View::make('resolucions.index', compact('resolucions','listipos','usuarios','anios'));
     }
 
     public function restablecerbuscador() {
@@ -145,15 +152,38 @@ class ResolucionsController extends BaseController {
         if($control) {
             return Redirect::action($control)->with('message', 'Acceso denegado');
         }
+        $tipocarga = Input::get('tipo');
+        switch ($tipocarga) {
+            case 'R':
+                $tipocarga = 'Resolución';
+                Session::put('busqueda.tipocarga', $tipocarga);
+            break;
+            case 'D':
+                $tipocarga = 'Disposición';
+                Session::put('busqueda.tipocarga', $tipocarga);
+            break;
+            case 'M':
+                $tipocarga = 'Memorándum';
+                Session::put('busqueda.tipocarga', $tipocarga);
+            break;
+            default:
+                if(Session::get('busqueda.tipocarga') != null) {
+                    $tipocarga = Session::get('busqueda.tipocarga');
+                } else {
+                    return Redirect::route('resolucions.index')->with('message', 'Debe seleccionar algun tipo de documento a guardar.');
+                }
+            break;
+        }
+        $nombres = DB::table('nombres')->where('documento','=',$tipocarga)
+                                        ->lists('nombre','nombre');
         
-        $nombres = DB::table('nombres')->lists('nombre','nombre');
         $nombres = array('' => '-- Seleccione ---') + $nombres;
         $listipos = Tipo::lists('nombre', 'id');
-        $listipos = array('' => '--- Seleccione el tipo ---') + $listipos;
+        $listipos = array('' => '--- Seleccione categoría ---') + $listipos;
         $tags = DB::table('tags')->get();
         $checkedarray = array();
         
-        return View::make('resolucions.create', compact('listipos','nombres','tags','checkedarray'));
+        return View::make('resolucions.create', compact('listipos','nombres','tags','checkedarray','tipocarga'));
     }
 
     /**
@@ -167,8 +197,8 @@ class ResolucionsController extends BaseController {
             return Redirect::action($control)->with('message', 'Acceso denegado');
         }
         
-        
         $input = Input::all();
+        $tipo = $input['documento'];
 //        echo "<pre>";
 //        var_dump($input);
 //        echo "</pre>";
@@ -183,12 +213,13 @@ class ResolucionsController extends BaseController {
                 $anio = $fh[2];
                 $resolucionnum = $input['numero'];
                 $resultadoresol = DB::table('resolucions')->where('resolucions.numero', '=', $resolucionnum)
+                                                          ->where('resolucions.documento', '=', $input['documento'])
                                                           ->whereRaw("YEAR(resolucions.fecha)='".$anio."'")
                                                           ->count();
                 if($resultadoresol != 0) {
                     return Redirect::route('resolucions.create')->withInput()
                                                     ->withErrors($validation)
-                                                    ->with('message', 'Número de resolución duplicada.');
+                                                    ->with('message', 'Número duplicado.');
                 }
                 $fecha = explode('-',$input['fecha']);
                 $destinationPath = 'uploads/'.$fecha[0];
@@ -260,16 +291,14 @@ class ResolucionsController extends BaseController {
                         }
                     }
                     
-                    
-                    
-                    return Redirect::route('resolucions.index')->with('message', 'Resolución guardada.');
+                    return Redirect::route('resolucions.index')->with('message', 'Documento guardado.');
                 }
             }
         }
-
+        
         return Redirect::route('resolucions.create')->withInput()
                                                     ->withErrors($validation)
-                                                    ->with('message', 'Error al intentar guardar la resolución, inténtelo de nuevo.');
+                                                    ->with('message', 'Error al intentar guardar, inténtelo de nuevo.');
     }
 
     /**
@@ -323,7 +352,7 @@ class ResolucionsController extends BaseController {
             $rolusario = 'administrador';
         if(strtolower($rolusario) != 'administrador') {
             if($resolucion->user_id != Auth::user()->id) {
-                return Redirect::route('resolucions.index')->with('message', 'No puede editar las resoluciones cargadas por otro usuario.');
+                return Redirect::route('resolucions.index')->with('message', 'No pueden editar los documentos cargados por otro usuario.');
             }
         }
         $fh = explode('-', $resolucion->fecha);
@@ -332,12 +361,15 @@ class ResolucionsController extends BaseController {
             return Redirect::route('resolucions.index');
         }
         
-        $nombres = DB::table('nombres')->lists('nombre','nombre');
+        $tipocarga = $resolucion->documento;
+        
+        $nombres = DB::table('nombres')->where('documento','=',$tipocarga)
+                                        ->lists('nombre','nombre');
         $nombres = array('' => '-- Seleccione ---') + $nombres;
         $listipos = Tipo::lists('nombre', 'id');
-        $listipos = array('' => '--- Seleccione el tipo ---') + $listipos;
+        $listipos = array('' => '--- Seleccione categoría ---') + $listipos;
         $tags = DB::table('tags')->get();
-        return View::make('resolucions.edit', compact('resolucion','listipos','nombres','tags','checkedarray'));
+        return View::make('resolucions.edit', compact('resolucion','listipos','nombres','tags','checkedarray', 'tipocarga'));
     }
 
     /**
@@ -369,7 +401,7 @@ class ResolucionsController extends BaseController {
         if(strtolower($rolusario) != 'administrador') {
             $resolucionselect = DB::table('resolucions')->select(array('user_id'))->find($id);
             if(Auth::user()->id != $resolucionselect->user_id) {
-                return Redirect::route('resolucions.index')->with('message', 'No puede editar las resoluciones cargadas por otro usuario.');
+                return Redirect::route('resolucions.index')->with('message', 'No pueden editar los documentos cargados por otro usuario.');
             }
         }
         $input = array_except(Input::all(), '_method');
@@ -446,12 +478,12 @@ class ResolucionsController extends BaseController {
                 }
             }
             
-            return Redirect::route('resolucions.index')->with('message', 'Resolución actualizada.');
+            return Redirect::route('resolucions.index')->with('message', 'Documento Actualizado.');
         }
 
         return Redirect::route('resolucions.edit', $id)->withInput()
                                                        ->withErrors($validation)
-                                                       ->with('message', 'Error al intentar guardar la resolución, inténtelo de nuevo.');
+                                                       ->with('message', 'Error al intentar guardar, inténtelo de nuevo.');
     }
 
     /**

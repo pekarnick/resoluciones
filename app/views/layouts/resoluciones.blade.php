@@ -3,17 +3,17 @@
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
                 <meta name="apple-mobile-web-app-capable" content="yes" />    
-                <title>Resoluciones D.V.P.</title>
+                <title>{{ $titulopagina }} D.V.P.</title>
                 
-                <link href="/css/bootstrap.min.css" rel="stylesheet" />
-                <link href="/css/bootstrap-responsive.min.css" rel="stylesheet" />
+                <link href="/css/{{ $tema }}/bootstrap.css" rel="stylesheet" />
+                <link href="/css/{{ $tema }}/bootstrap-responsive.min.css" rel="stylesheet" />
 
                 <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600" rel="stylesheet" />
                 <link href="/css/font-awesome.min.css" rel="stylesheet" />
                 <link href="/css/dark-hive/jquery-ui-1.10.3.custom.min.css" rel="stylesheet" />
     
-                <link href="/css/base-admin-2.css" rel="stylesheet" />
-                <link href="/css/base-admin-2-responsive.css" rel="stylesheet" />
+                <link href="/css/{{ $tema }}/base-admin-2.css" rel="stylesheet" />
+                <link href="/css/{{ $tema }}/base-admin-2-responsive.css" rel="stylesheet" />
                 @yield('css')
                 <link href="/css/custom.css" rel="stylesheet" />
 	</head>
@@ -22,11 +22,9 @@
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="navbar-inner">
 		<div class="container">
-			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-				<i class="icon-cog"></i>
-			</a>
 			<a class="brand" href="/">
-				RESOLUCIONES
+                            <img src="/img/imagen.php?src=/img/logo-head.png&h=50" alt="" />
+				{{ $titulopagina }}
 			</a>
                         <a href="/user/logout" class="pull-right">
                             <button class="btn btn-small btn-danger"><i class="icon-off"></i> Cerrar Sesión</button>
@@ -48,7 +46,7 @@
 						<a href="/resolucions">
 							<i class="icon-copy"></i>
 							<span>
-                                                            Resoluciones
+                                                            Documentos
                                                         </span>
 						</a>
 					</li>
@@ -58,7 +56,7 @@
                                                         <a href="/tipos">
                                                                 <i class="icon-file"></i>
                                                                 <span>
-                                                                    Tipos de Resolución
+                                                                    Categorías
                                                                 </span>
                                                         </a>	    				
                                                 </li>
@@ -75,6 +73,14 @@
                                         @endif
                                         @if(isset(Auth::user()->nombre_y_apellido))
                                             @if((strtolower($rolusuario) == 'administrador') || (strtolower($rolusuario) == 'jefe - director'))
+                                                <li <?php if(Request::segment(1) == 'nombres') { echo 'class="active"'; } ?>>
+                                                        <a href="/nombres">
+                                                                <i class="icon-road"></i>
+                                                                <span>
+                                                                    Nombres
+                                                                </span>
+                                                        </a>	    				
+                                                </li>
                                                 <li <?php if((Request::segment(1) == 'users') || (Request::segment(1) == 'user') || (Request::segment(1) == 'roles') || (Request::segment(1) == 'permissions')) { echo 'class="active"'; } ?>>
                                                         <a href="/users">
                                                                 <i class="icon-user"></i>

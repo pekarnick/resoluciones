@@ -15,6 +15,7 @@ Route::resource('tipos', 'TiposController');
 Route::resource('roles', 'RolesController');
 Route::resource('permissions', 'PermissionsController');
 Route::resource('tags', 'TagsController');
+Route::resource('nombres', 'NombresController');
 Route::controller( 'users',                'UserController', array('only' => array('index')));
 // Confide routes
 Route::get( 'user/index',                  'UserController@index');
