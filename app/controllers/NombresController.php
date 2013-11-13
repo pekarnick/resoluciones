@@ -57,7 +57,7 @@ class NombresController extends BaseController {
                 }
 		$input = Input::all();
 		$validation = Validator::make($input, Nombre::$rules);
-
+                $input['nombre'] = ucfirst(strtoupper($input['nombre']));
 		if ($validation->passes())
 		{
 			$this->nombre->create($input);
@@ -101,7 +101,7 @@ class NombresController extends BaseController {
                     return Redirect::action($control)->with('message', 'Acceso denegado');
                 }
 		$nombre = $this->nombre->find($id);
-
+                
 		if (is_null($nombre))
 		{
 			return Redirect::route('nombres.index');
@@ -124,7 +124,7 @@ class NombresController extends BaseController {
                 }
 		$input = array_except(Input::all(), '_method');
 		$validation = Validator::make($input, Nombre::$rules);
-
+                $input['nombre'] = ucfirst(strtoupper($input['nombre']));
 		if ($validation->passes())
 		{
 			$nombre = $this->nombre->find($id);

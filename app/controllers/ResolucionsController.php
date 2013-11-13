@@ -167,7 +167,11 @@ class ResolucionsController extends BaseController {
                 Session::put('busqueda.tipocarga', $tipocarga);
             break;
             default:
-                $tipocarga = Session::get('busqueda.tipocarga');
+                if(Session::get('busqueda.tipocarga') != null) {
+                    $tipocarga = Session::get('busqueda.tipocarga');
+                } else {
+                    return Redirect::route('resolucions.index')->with('message', 'Debe seleccionar algun tipo de documento a guardar.');
+                }
             break;
         }
         $nombres = DB::table('nombres')->where('documento','=',$tipocarga)
@@ -359,7 +363,8 @@ class ResolucionsController extends BaseController {
         
         $tipocarga = $resolucion->documento;
         
-        $nombres = DB::table('nombres')->lists('nombre','nombre');
+        $nombres = DB::table('nombres')->where('documento','=',$tipocarga)
+                                        ->lists('nombre','nombre');
         $nombres = array('' => '-- Seleccione ---') + $nombres;
         $listipos = Tipo::lists('nombre', 'id');
         $listipos = array('' => '--- Seleccione categoría ---') + $listipos;
