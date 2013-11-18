@@ -13,7 +13,7 @@ return array(
 	|
 	*/
 
-	'debug' => false,
+	'debug' => true,
 
 	/*
 	|--------------------------------------------------------------------------
@@ -116,7 +116,6 @@ return array(
                 'Way\Generators\GeneratorsServiceProvider',
                 'Zizaco\Confide\ConfideServiceProvider',
                 'Zizaco\Entrust\EntrustServiceProvider',
-
 	),
 
 	/*

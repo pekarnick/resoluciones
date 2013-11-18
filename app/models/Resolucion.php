@@ -5,6 +5,9 @@ class Resolucion extends Eloquent {
         public function tipo() {
             return $this->belongsTo('Tipo', 'tipo_id');
         }
+        public function imagenes() {
+            return $this->belongsTo('Imagene');
+        }
         public function tags() {
             return $this->belongsToMany('Tag');
         }

@@ -30,3 +30,11 @@ ul li.error {
 .flash {
     text-align: center;
 }
+.nueva-pagina {
+    font-size: 10px;
+    color: #999;
+    cursor: pointer;
+}
+.nueva-pagina:hover {
+    color: #444;
+}
