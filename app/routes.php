@@ -83,6 +83,7 @@ Route::get('limpiar_db', function() {
         echo "<br>";
     }
     if(listar_directorios_ruta("./uploads/")) {
+        echo "<hr />";
         listar_directorios_ruta("./uploads/");
     }
 });

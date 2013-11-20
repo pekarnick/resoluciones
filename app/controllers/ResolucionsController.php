@@ -369,7 +369,21 @@ class ResolucionsController extends BaseController {
         if($control) {
             return Redirect::action($control)->with('message', 'Acceso denegado');
         }
-        $resolucion = $this->resolucion->findOrFail($id);
+        $resolucion = DB::table('resolucions')->leftJoin('tipos', 'resolucions.tipo_id', '=', 'tipos.id')
+                                              ->leftJoin('users', 'resolucions.user_id', '=', 'users.id')
+                                              ->leftJoin('resolucion_tag', 'resolucions.id', '=', 'resolucion_tag.resolucion_id')
+                                              ->select(
+                                                        'resolucions.id', "resolucions.numero", "resolucions.fecha", "resolucions.resuelve", "resolucions.archivo", "resolucions.iniciales", "resolucions.documento", "resolucions.observaciones", "resolucions.created_at", "resolucions.updated_at",
+                                                        'tipos.nombre as tipo_de_resolucion',
+                                                        'users.nombre_y_apellido as usuario',
+                                                        'users.id as userid'
+                                                      )
+                                              ->where('resolucions.id','=',$id)
+                                              ->orderBy('resolucions.id', 'desc')
+                                              ->groupBy('resolucions.id')
+                                              ->first();
+                                              
+//        $resolucion = $this->resolucion->findOrFail($id);
         return View::make('resolucions.show', compact('resolucion'));
     }
 
@@ -392,24 +406,26 @@ class ResolucionsController extends BaseController {
             $checkedarray[] = $chec->id;
         }
         
-        $rolesdeusuarios = Role::all();
-        $rolusario = "";
-        foreach($rolesdeusuarios as $roldeusuario) {
-            if($this->usuarioactual->hasRole($roldeusuario->name)) {
-                $rolusario = $roldeusuario->name;
-            }
-        }
-        if($this->usuarioactual->hasRole('Invitado'))
-            $rolusario = 'invitado';
-        if($this->usuarioactual->hasRole('Consultas'))
-            $rolusario = 'consultas';
-        if($this->usuarioactual->hasRole('Usuarios'))
-            $rolusario = 'usuarios';
-        if($this->usuarioactual->hasRole('Administrador'))
-            $rolusario = 'administrador';
-        if(strtolower($rolusario) != 'administrador') {
-            if($resolucion->user_id != Auth::user()->id) {
-                return Redirect::route('resolucions.index')->with('message', 'No pueden editar los documentos cargados por otro usuario.');
+//        $rolesdeusuarios = Role::all();
+//        $rolusario = "";
+//        foreach($rolesdeusuarios as $roldeusuario) {
+//            if($this->usuarioactual->hasRole($roldeusuario->name)) {
+//                $rolusario = $roldeusuario->name;
+//            }
+//        }
+//        if($this->usuarioactual->hasRole('Invitado'))
+//            $rolusario = 'invitado';
+//        if($this->usuarioactual->hasRole('Consultas'))
+//            $rolusario = 'consultas';
+//        if($this->usuarioactual->hasRole('Usuarios'))
+//            $rolusario = 'usuarios';
+//        if($this->usuarioactual->hasRole('Administrador'))
+//            $rolusario = 'administrador';
+        if(!$this->usuarioactual->hasRole('Administrador')) {
+            if(!$this->usuarioactual->hasRole('Jefe - Director')) {
+                if($resolucion->user_id != Auth::user()->id) {
+                    return Redirect::route('resolucions.index')->with('message', 'No pueden editar los documentos cargados por otro usuario.');
+                }
             }
         }
         $fh = explode('-', $resolucion->fecha);

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: localhost
--- Tiempo de generación: 08-11-2013 a las 08:41:20
+-- Tiempo de generación: 19-11-2013 a las 10:33:43
 -- Versión del servidor: 5.5.31
 -- Versión de PHP: 5.4.4-14+deb7u4
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Base de datos: `c1_resolucionesdb`
+-- Base de datos: `c1_b2pdb`
 --
 
 -- --------------------------------------------------------
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `assigned_roles` (
   PRIMARY KEY (`id`),
   KEY `assigned_roles_user_id_foreign` (`user_id`),
   KEY `assigned_roles_role_id_foreign` (`role_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=58 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=59 ;
 
 --
 -- Volcado de datos para la tabla `assigned_roles`
@@ -45,9 +45,26 @@ INSERT INTO `assigned_roles` (`id`, `user_id`, `role_id`) VALUES
 (45, 6, 1),
 (47, 10, 0),
 (48, 8, 3),
-(51, 4, 6),
 (52, 7, 4),
-(57, 5, 3);
+(57, 5, 3),
+(58, 4, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `imagenes`
+--
+
+CREATE TABLE IF NOT EXISTS `imagenes` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `resolucion_id` int(10) unsigned NOT NULL,
+  `hoja` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `archivo` text COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `imagenes_resolucion_id_index` (`resolucion_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -74,7 +91,9 @@ INSERT INTO `migrations` (`migration`, `batch`) VALUES
 ('2013_10_23_130543_entrust_setup_tables', 6),
 ('2013_10_28_115816_create_persmisions_table', 7),
 ('2013_11_05_165752_create_tags_table', 8),
-('2013_11_05_171144_pivot_resolucion_tag_table', 9);
+('2013_11_05_171144_pivot_resolucion_tag_table', 9),
+('2013_11_14_092538_cabinet_setup_uploads_table', 10),
+('2013_11_15_123838_create_imagenes_table', 11);
 
 -- --------------------------------------------------------
 
@@ -84,18 +103,23 @@ INSERT INTO `migrations` (`migration`, `batch`) VALUES
 
 CREATE TABLE IF NOT EXISTS `nombres` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `documento` enum('Resolución','Memorándum','Disposición') NOT NULL,
   `nombre` varchar(150) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
 
 --
 -- Volcado de datos para la tabla `nombres`
 --
 
-INSERT INTO `nombres` (`id`, `nombre`) VALUES
-(1, 'Administrador'),
-(2, 'Subadministrador'),
-(3, 'Ingeniero jefe');
+INSERT INTO `nombres` (`id`, `documento`, `nombre`, `created_at`, `updated_at`) VALUES
+(1, 'Resolución', 'ADMINISTRADOR', '0000-00-00 00:00:00', '2013-11-13 10:44:24'),
+(2, 'Resolución', 'SUBADMINISTRADOR', '0000-00-00 00:00:00', '2013-11-13 10:44:29'),
+(3, 'Resolución', 'INGENIERO JEFE', '0000-00-00 00:00:00', '2013-11-13 10:44:33'),
+(5, 'Disposición', 'DISPISICIÓN-DIR O JEFE', '2013-11-12 12:53:32', '2013-11-13 10:44:53'),
+(6, 'Memorándum', 'MEMO DIR O JEFE', '2013-11-12 12:53:45', '2013-11-13 10:44:42');
 
 -- --------------------------------------------------------
 
@@ -122,7 +146,7 @@ CREATE TABLE IF NOT EXISTS `permissions` (
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=65 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=74 ;
 
 --
 -- Volcado de datos para la tabla `permissions`
@@ -192,7 +216,16 @@ INSERT INTO `permissions` (`id`, `name`, `display_name`, `created_at`, `updated_
 (61, 'tags.edit', 'Editar Tag (Edit)', '2013-11-06 09:30:33', '2013-11-06 09:30:33'),
 (62, 'tags.update', 'Editar Tag (Update)', '2013-11-06 09:30:33', '2013-11-06 09:30:33'),
 (63, 'tags/{tags}', 'Editar Tag (PATCH)', '2013-11-06 09:30:33', '2013-11-06 09:30:33'),
-(64, 'tags.destroy', 'Eliminar Tag', '2013-11-06 09:30:33', '2013-11-06 09:30:33');
+(64, 'tags.destroy', 'Eliminar Tag', '2013-11-06 09:30:33', '2013-11-06 09:30:33'),
+(65, 'nombres.index', 'Nombres Index', '2013-11-12 14:39:15', '2013-11-12 14:39:15'),
+(66, 'nombres.create', 'Nuevo Nombre (CREATE)', '2013-11-12 14:39:15', '2013-11-12 14:39:15'),
+(67, 'nombres.store', 'Nuevo Nombre (Store)', '2013-11-12 14:39:15', '2013-11-12 14:39:15'),
+(68, 'nombres.show', 'Detalle Nombre', '2013-11-12 14:39:15', '2013-11-12 14:39:15'),
+(69, 'nombres.edit', 'Editar Nombre (Edit)', '2013-11-12 14:39:15', '2013-11-12 14:39:15'),
+(70, 'nombres.update', 'Editar Nombre (Update)', '2013-11-12 14:39:15', '2013-11-12 14:39:15'),
+(71, 'nombres/{nombres}', 'Editar Nombre (PATCH)', '2013-11-12 14:39:15', '2013-11-12 14:39:15'),
+(72, 'nombres.destroy', 'Eliminar Nombre', '2013-11-12 14:39:15', '2013-11-12 14:39:15'),
+(73, 'users/tags/{v1}/{v2}/{v3}/{v4}/{v5}', 'Tags index', '2013-11-12 14:39:15', '2013-11-12 14:39:15');
 
 -- --------------------------------------------------------
 
@@ -207,7 +240,7 @@ CREATE TABLE IF NOT EXISTS `permission_role` (
   PRIMARY KEY (`id`),
   KEY `permission_role_permission_id_foreign` (`permission_id`),
   KEY `permission_role_role_id_foreign` (`role_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=308 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=335 ;
 
 --
 -- Volcado de datos para la tabla `permission_role`
@@ -240,9 +273,6 @@ INSERT INTO `permission_role` (`id`, `permission_id`, `role_id`) VALUES
 (166, 4, 4),
 (167, 4, 6),
 (168, 4, 3),
-(169, 5, 4),
-(170, 5, 6),
-(171, 5, 3),
 (172, 6, 4),
 (173, 6, 6),
 (174, 6, 3),
@@ -354,7 +384,32 @@ INSERT INTO `permission_role` (`id`, `permission_id`, `role_id`) VALUES
 (304, 63, 6),
 (305, 63, 3),
 (306, 64, 4),
-(307, 64, 6);
+(307, 64, 6),
+(308, 65, 4),
+(309, 65, 6),
+(310, 66, 4),
+(311, 66, 6),
+(314, 68, 4),
+(315, 68, 6),
+(316, 69, 4),
+(317, 69, 6),
+(318, 70, 4),
+(319, 70, 6),
+(320, 67, 4),
+(321, 67, 6),
+(322, 71, 4),
+(323, 71, 6),
+(324, 72, 4),
+(325, 72, 6),
+(326, 73, 4),
+(327, 73, 2),
+(328, 73, 1),
+(329, 73, 6),
+(330, 73, 3),
+(331, 5, 4),
+(332, 5, 2),
+(333, 5, 6),
+(334, 5, 3);
 
 -- --------------------------------------------------------
 
@@ -380,6 +435,7 @@ CREATE TABLE IF NOT EXISTS `persmisions` (
 CREATE TABLE IF NOT EXISTS `resolucions` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `numero` int(11) NOT NULL,
+  `documento` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `iniciales` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `tipo_id` int(11) NOT NULL,
   `fecha` date NOT NULL,
@@ -390,44 +446,36 @@ CREATE TABLE IF NOT EXISTS `resolucions` (
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=34 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=56 ;
 
 --
 -- Volcado de datos para la tabla `resolucions`
 --
 
-INSERT INTO `resolucions` (`id`, `numero`, `iniciales`, `tipo_id`, `fecha`, `resuelve`, `observaciones`, `archivo`, `user_id`, `created_at`, `updated_at`) VALUES
-(1, 1, 'gmc', 1, '2013-10-18', 'Administrador', 'Observaciones', 'uploads/2013/10/201310220230171.pdf', 4, '2013-10-19 00:01:54', '2013-10-22 17:30:17'),
-(2, 2, 'gmc', 1, '2013-10-20', 'SubAdministrador', 'Observaciones 2', 'uploads/2013/10/201310220230001.pdf', 4, '2013-10-19 00:39:50', '2013-10-22 17:30:01'),
-(3, 3, 'gmc', 1, '2013-10-18', 'Administrador', 'Observaciones 444', 'uploads/2013/10/201310221103191.pdf', 6, '2013-10-19 00:41:57', '2013-10-22 14:03:40'),
-(5, 5, 'gmc', 2, '2013-10-29', 'Administrador', 'Observaciones!', 'uploads/2013/10/201310210921331.pdf', 4, '2013-10-21 12:21:33', '2013-10-29 15:31:37'),
-(6, 3566, 'gmc', 1, '2013-10-23', 'Administrador', 'Una observaciónd', 'uploads/2013/10/201310300246205.pdf', 5, '2013-10-30 17:46:20', '2013-10-30 18:53:49'),
-(7, 6423, 'gmc', 2, '2013-10-31', 'Administrador', 'Observaciones 4', 'uploads/2013/10/201310300247215.pdf', 5, '2013-10-30 17:47:21', '2013-10-30 17:49:16'),
-(8, 34534, 'gmc', 1, '2013-10-31', 'Administrador', 'wsrf  edgf', 'uploads/2013/10/201310311115597.pdf', 7, '2013-10-31 14:15:59', '2013-10-31 14:15:59'),
-(9, 34535, 'gmc', 1, '2013-10-31', 'Administrador', 'wsrf  edgf', 'uploads/2013/10/201310310817067.pdf', 7, '2013-10-31 11:17:06', '2013-10-31 11:17:06'),
-(10, 34535, 'gmc', 2, '2013-10-31', 'Administrador', 'dsfsd fsdf dsf', 'uploads/2013/10/201310310841137.pdf', 7, '2013-10-31 11:41:13', '2013-10-31 11:41:13'),
-(11, 34538, 'gmc', 1, '2013-10-30', 'Administrador', 'dsgfdf', 'uploads/2013/10/201310310845187.pdf', 7, '2013-10-31 11:45:18', '2013-10-31 11:45:18'),
-(12, 53455, 'gmc', 2, '2013-10-31', 'Ingeniero Jefe', '', 'uploads/2013/10/201310311200557.pdf', 7, '2013-10-31 15:00:55', '2013-10-31 15:00:55'),
-(13, 53459, 'gmc', 2, '2013-10-31', 'Ingeniero Jefe', '--', 'uploads/2013/10/201310311205007.jpg', 7, '2013-10-31 15:05:00', '2013-11-05 15:17:56'),
-(14, 53460, 'gmc', 2, '2013-10-31', 'Ingeniero Jefe', '', 'uploads/2013/10/201310311207037.pdf', 7, '2013-10-31 15:07:03', '2013-10-31 15:07:03'),
-(15, 53458, 'gmc', 1, '2013-10-31', 'SubAdministrador', '', 'uploads/2013/10/201310311209307.pdf', 7, '2013-10-31 15:09:30', '2013-10-31 15:09:30'),
-(16, 53461, 'gmc', 2, '2013-10-31', 'Administrador', '', 'uploads/2013/10/201310311210257.pdf', 7, '2013-10-31 15:10:25', '2013-10-31 15:10:25'),
-(17, 53462, 'gmc', 1, '2013-10-31', 'SubAdministrador', '', 'uploads/2013/10/201310311210447.pdf', 7, '2013-10-31 15:10:44', '2013-10-31 15:10:44'),
-(18, 53463, 'gmc', 2, '2013-10-31', 'Administrador', '.-.', 'uploads/2013/10/201310311211037.pdf', 7, '2013-10-31 15:11:03', '2013-11-05 15:15:41'),
-(19, 53464, 'gmc', 1, '2013-10-31', 'SubAdministrador', '', 'uploads/2013/10/201310311211247.pdf', 7, '2013-10-31 15:11:24', '2013-10-31 15:11:24'),
-(20, 53465, 'gmc', 4, '2013-10-31', 'Subadministrador', 'Descripción de la resolución', 'uploads/2013/10/201311050503151.pdf', 7, '2013-10-31 15:11:46', '2013-11-06 15:29:16'),
-(21, 15947, 'gar', 2, '2013-11-15', 'Subadministrador', 'Descripcion', 'uploads/2013/11/201311061054007.pdf', 7, '2013-11-06 13:54:00', '2013-11-06 13:54:00'),
-(22, 15947, 'gar', 2, '2014-11-15', 'Subadministrador', 'Descripcion', 'uploads/2014/11/201311061057537.pdf', 7, '2013-11-06 13:57:53', '2013-11-06 13:57:53'),
-(23, 15975, 'gar', 2, '2013-11-07', 'Subadministrador', 'Descripción', 'uploads/2013/11/201311061118537.pdf', 7, '2013-11-06 14:18:53', '2013-11-06 14:18:53'),
-(24, 15574, 'gar', 2, '2013-11-06', 'Administrador', 'DDsda asd asd ', 'uploads/2013/11/201311061119537.pdf', 7, '2013-11-06 14:19:53', '2013-11-06 14:19:53'),
-(25, 12379, 'gar', 1, '2013-11-06', 'Administrador', 'Descripcion', 'uploads/2013/11/201311061121327.pdf', 7, '2013-11-06 14:21:32', '2013-11-06 14:21:32'),
-(26, 25479, 'gar', 2, '2013-11-06', 'Administrador', 'Desc', 'uploads/2013/11/201311061124317.pdf', 7, '2013-11-06 14:24:31', '2013-11-06 14:24:31'),
-(27, 254793, 'gar', 2, '2013-11-06', 'Administrador', 'Desc', 'uploads/2013/11/201311061125067.pdf', 7, '2013-11-06 14:25:06', '2013-11-06 14:25:06'),
-(28, 7593, 'gar', 1, '2013-11-06', 'Ingeniero jefe', 'fhfglsk sdi dfs', 'uploads/2013/11/201311061129047.pdf', 7, '2013-11-06 14:29:04', '2013-11-06 14:29:04'),
-(29, 98462, 'gar', 1, '2013-11-06', 'Administrador', 'Descripcion', 'uploads/2013/11/201311061132127.pdf', 7, '2013-11-06 14:32:12', '2013-11-06 14:32:12'),
-(30, 95426, 'gar', 3, '2013-11-06', 'Administrador', 'Descripcion', 'uploads/2013/11/201311061152057.pdf', 7, '2013-11-06 14:52:05', '2013-11-06 14:52:05'),
-(31, 9524, 'gar', 1, '2013-11-06', 'Subadministrador', 'Descisdf sdf df', 'uploads/2013/11/201311061217057.pdf', 7, '2013-11-06 15:17:05', '2013-11-06 15:17:05'),
-(32, 6571, 'gar', 4, '2013-11-07', 'Administrador', 'Descripcion', 'uploads/2013/11/201311070759537.pdf', 7, '2013-11-07 10:59:53', '2013-11-07 10:59:53');
+INSERT INTO `resolucions` (`id`, `numero`, `documento`, `iniciales`, `tipo_id`, `fecha`, `resuelve`, `observaciones`, `archivo`, `user_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Resolución', 'gmc', 1, '2013-10-18', 'ADMINISTRADOR', 'Observaciones', 'uploads/2013/10/201310220230171.pdf', 4, '2013-10-19 00:01:54', '2013-11-13 13:46:34'),
+(2, 2, 'Disposición', 'gmc', 1, '2013-10-20', 'SUBADMINISTRADOR', 'Observaciones 2', 'uploads/2013/10/201310220230001.pdf', 4, '2013-10-19 00:39:50', '2013-10-22 17:30:01'),
+(3, 3, 'Resolución', 'gmc', 1, '2013-10-18', 'ADMINISTRADOR', 'Observaciones 444', 'uploads/2013/10/201310221103191.pdf', 6, '2013-10-19 00:41:57', '2013-10-22 14:03:40'),
+(5, 5, 'Resolución', 'gmc', 2, '2013-10-29', 'ADMINISTRADOR', 'Observaciones!', 'uploads/2013/10/201310210921331.pdf', 4, '2013-10-21 12:21:33', '2013-10-29 15:31:37'),
+(20, 53465, 'Resolución', 'gmc', 4, '2013-10-31', 'SUBADMINISTRADOR', 'Descripción de la resolución', 'uploads/2013/10/201311050503151.pdf', 7, '2013-10-31 15:11:46', '2013-11-06 15:29:16'),
+(21, 15947, 'Resolución', 'gar', 2, '2013-11-15', 'SUBADMINISTRADOR', 'Descripcion', 'uploads/2013/11/201311061054007.pdf', 7, '2013-11-06 13:54:00', '2013-11-13 13:46:27'),
+(22, 15947, 'Memorándum', 'gar', 2, '2013-11-15', 'MEMO DIR O JEFE', 'Descripcion', 'uploads/2014/11/201311061057537.pdf', 7, '2013-11-06 13:57:53', '2013-11-13 13:50:34'),
+(23, 15975, 'Resolución', 'gar', 2, '2013-11-07', 'SUBADMINISTRADOR', 'Descripción', 'uploads/2013/11/201311061118537.pdf', 7, '2013-11-06 14:18:53', '2013-11-13 13:46:20'),
+(24, 15574, 'Disposición', 'gar', 2, '2013-11-06', 'DISPISICIÓN-DIR O JEFE', 'DDsda asd asd ', 'uploads/2013/11/201311061119537.pdf', 7, '2013-11-06 14:19:53', '2013-11-13 13:46:07'),
+(25, 12379, 'Resolución', 'gar', 1, '2013-11-06', 'ADMINISTRADOR', 'Descripcion', 'uploads/2013/11/201311061121327.pdf', 7, '2013-11-06 14:21:32', '2013-11-13 13:45:52'),
+(26, 25479, 'Resolución', 'gar', 2, '2013-11-06', 'ADMINISTRADOR', 'Desc', 'uploads/2013/11/201311061124317.pdf', 7, '2013-11-06 14:24:31', '2013-11-06 14:24:31'),
+(27, 254793, 'Resolución', 'gar', 2, '2013-11-06', 'ADMINISTRADOR', 'Desc', 'uploads/2013/11/201311061125067.pdf', 7, '2013-11-06 14:25:06', '2013-11-06 14:25:06'),
+(28, 7593, 'Resolución', 'gar', 1, '2013-11-06', 'INGENIERO JEFE', 'fhfglsk sdi dfs', 'uploads/2013/11/201311061129047.pdf', 7, '2013-11-06 14:29:04', '2013-11-06 14:29:04'),
+(29, 98462, 'Resolución', 'gar', 1, '2013-11-06', 'ADMINISTRADOR', 'Descripcion', 'uploads/2013/11/201311061132127.pdf', 7, '2013-11-06 14:32:12', '2013-11-06 14:32:12'),
+(30, 95426, 'Resolución', 'gar', 3, '2013-11-06', 'ADMINISTRADOR', 'Descripcion', 'uploads/2013/11/201311061152057.pdf', 7, '2013-11-06 14:52:05', '2013-11-06 14:52:05'),
+(31, 9524, 'Resolución', 'gar', 1, '2013-11-06', 'SUBADMINISTRADOR', 'Descisdf sdf df', 'uploads/2013/11/201311061217057.pdf', 7, '2013-11-06 15:17:05', '2013-11-06 15:17:05'),
+(32, 6571, 'Resolución', 'gar', 4, '2013-11-07', 'ADMINISTRADOR', 'Descripcion', 'uploads/2013/11/201311070759537.pdf', 7, '2013-11-07 10:59:53', '2013-11-07 10:59:53'),
+(44, 954602, 'Resolución', 'gar', 2, '2013-11-18', 'SUBADMINISTRADOR', 'y', 'uploads/2013/11/201311181104117.pdf', 7, '2013-11-18 10:49:43', '2013-11-18 14:04:11'),
+(45, 954302, 'Resolución', 'gar', 2, '2013-11-18', 'SUBADMINISTRADOR', 'y', 'uploads/2013/11/20131118110244_7.pdf', 7, '2013-11-18 11:00:11', '2013-11-18 14:02:44'),
+(52, 325398, 'Resolución', 'gar', 2, '2013-11-18', 'SUBADMINISTRADOR', 'y', 'uploads/2013/11/20131118082923_7.pdf', 7, '2013-11-18 11:29:19', '2013-11-18 11:29:19'),
+(53, 48254, 'Disposición', 'gar', 2, '2013-11-18', 'DISPISICIÓN-DIR O JEFE', '53', 'uploads/2013/11/201311181120027.pdf', 7, '2013-11-18 14:20:02', '2013-11-18 14:20:02'),
+(54, 34567, 'Disposición', 'gar', 2, '2013-11-18', 'DISPISICIÓN-DIR O JEFE', 'sdg', 'uploads/2013/11/20131118112034_7.pdf', 7, '2013-11-18 14:20:30', '2013-11-18 14:20:30'),
+(55, 456546, 'Memorándum', 'gar', 1, '2013-11-18', 'MEMO DIR O JEFE', 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?', 'uploads/2013/11/20131118115103_7.pdf', 7, '2013-11-18 14:50:56', '2013-11-19 11:22:05');
 
 -- --------------------------------------------------------
 
@@ -442,17 +490,14 @@ CREATE TABLE IF NOT EXISTS `resolucion_tag` (
   PRIMARY KEY (`id`),
   KEY `resolucion_tag_resolucion_id_index` (`resolucion_id`),
   KEY `resolucion_tag_tag_id_index` (`tag_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=30 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=47 ;
 
 --
 -- Volcado de datos para la tabla `resolucion_tag`
 --
 
 INSERT INTO `resolucion_tag` (`id`, `resolucion_id`, `tag_id`) VALUES
-(3, 23, 4),
-(6, 25, 1),
 (7, 27, 1),
-(8, 27, 3),
 (11, 29, 1),
 (12, 29, 6),
 (17, 20, 6),
@@ -462,10 +507,12 @@ INSERT INTO `resolucion_tag` (`id`, `resolucion_id`, `tag_id`) VALUES
 (23, 32, 6),
 (24, 28, 2),
 (25, 28, 6),
-(26, 24, 2),
-(27, 24, 6),
-(28, 22, 2),
-(29, 22, 6);
+(37, 25, 1),
+(40, 24, 2),
+(41, 24, 6),
+(42, 23, 4),
+(45, 22, 2),
+(46, 22, 6);
 
 -- --------------------------------------------------------
 
@@ -515,7 +562,6 @@ CREATE TABLE IF NOT EXISTS `tags` (
 INSERT INTO `tags` (`id`, `nombre`, `created_at`, `updated_at`) VALUES
 (1, 'Departamento Administrativo', '2013-11-06 09:57:04', '2013-11-06 09:57:19'),
 (2, 'RRHH', '2013-11-06 10:03:00', '2013-11-06 10:03:00'),
-(3, 'Tag3', '2013-11-06 12:03:13', '2013-11-06 12:03:13'),
 (4, 'Nuevotag', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
 (5, 'Nuevotag2', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
 (6, 'Tag4', '0000-00-00 00:00:00', '0000-00-00 00:00:00');

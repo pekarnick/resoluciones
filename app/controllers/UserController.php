@@ -47,9 +47,12 @@ class UserController extends BaseController {
         if($control) {
             return Redirect::action($control)->with('message', 'Acceso denegado');
         }
-        $roles = Role::lists('name', 'id');
+        if($this->usuarioactual->hasRole('Administrador')) {
+            $roles = Role::lists('name', 'id');
+        } else {
+            $roles = DB::table('roles')->where('name','<>','Administrador')->lists('name', 'id');
+        }
         $roles = array('' => '--- Seleccione el rol ---') + $roles;
-        unset($roles[4]);
         return View::make('confide.signup', compact('roles'));
     }
 
@@ -320,7 +323,14 @@ class UserController extends BaseController {
         if (is_null($usuario)){
             return Redirect::action('UserController@get_index');
         }
-        $roles = Role::lists('name', 'id');
+        if(($usuario[0]->rolename == 'Administrador') && (!$this->usuarioactual->hasRole('Administrador'))) {
+            return Redirect::action('UserController@get_index')->with('message', 'No puedes editar un administrador');
+        }
+        if($this->usuarioactual->hasRole('Administrador')) {
+            $roles = Role::lists('name', 'id');
+        } else {
+            $roles = DB::table('roles')->where('name','<>','Administrador')->lists('name', 'id');
+        }
         $roles = array('' => '--- Seleccione el rol ---') + $roles;
         return View::make('confide.edit', compact('usuario', 'roles'));
     }
