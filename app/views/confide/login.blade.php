@@ -13,6 +13,7 @@
                         <label for="password">Contraseña:</label>
                         <input class="login password-field" tabindex="2" placeholder="{{{ Lang::get('confide::confide.password') }}}" type="password" name="password" id="password">
                 </div> <!-- /password -->
+                
         </div> <!-- /login-fields -->
 
         <div class="login-actions">

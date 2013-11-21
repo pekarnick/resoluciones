@@ -126,6 +126,7 @@ class UserController extends BaseController {
      */
     public function login()
     {
+        Session::forget('busqueda');
         if( Confide::user() )
         {
             // If user is logged, redirect to internal 

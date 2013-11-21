@@ -146,6 +146,5 @@
         <script src="/js/jquery-ui-1.10.3.custom.min.js"></script>
         <script src="/js/libs/bootstrap.min.js"></script>
         <script src="/js/Application.js"></script>
-
         @yield('scripts')
 </html>
