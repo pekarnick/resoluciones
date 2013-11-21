@@ -26,8 +26,8 @@ return array(
 	|
 	*/
 
-//	'default' => 'mysql',
-        'default' => 'sqlite',
+	'default' => 'mysql',
+//        'default' => 'sqlite',
 
 	/*
 	|--------------------------------------------------------------------------
