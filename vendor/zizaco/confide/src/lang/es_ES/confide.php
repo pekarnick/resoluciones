@@ -29,7 +29,7 @@ return array(
     ),
 
     'alerts' => array(
-        'account_created'        => 'Su cuenta ha sido creada satisfactoriamente. Por favor, compruebe su e-mail para obtener las instrucciones sobre como confirmar su cuenta.',
+        'account_created'        => 'Usuario agregado correctamente.',
         'too_many_attempts'      => 'Demasiados intentos. Inténtelo de nuevo en unos minutos.',
         'wrong_credentials'      => 'Usuario, e-mail o contraseña incorrectos.',
         'not_confirmed'          => 'Su cuenta no está habilitada, contacte al administrador del sistema.',

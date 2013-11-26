@@ -130,7 +130,7 @@ class TiposController extends BaseController {
 			$tipo = $this->tipo->find($id);
 			$tipo->update($input);
 
-			return Redirect::route('tipos.show', $id);
+			return Redirect::route('tipos.index');
 		}
 
 		return Redirect::route('tipos.edit', $id)

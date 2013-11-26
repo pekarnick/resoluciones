@@ -38,7 +38,7 @@
 		</tbody>
 	</table>
 @else
-	No se econtraron tipos de Resolución
+	No se econtraron categorías
 @endif
 
 @stop
