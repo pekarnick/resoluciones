@@ -49,17 +49,21 @@
                                         <td><span class="btn btn-small {{ ($user->roleid != "" && !empty($color[$user->roleid])) ? $color[$user->roleid] : $color[0] }}">{{{ $user->rolename }}}</span></td>
 					<td>{{{ $sino[$user->confirmed] }}}</td>
                                         <td>
-                                            {{ link_to_action('UserController@edit', 'Editar', array($user->id), array('class' => 'btn btn-info')) }}&nbsp;&nbsp;
-                                            <?php
-                                                switch ($user->confirmed) {
-                                                    case 0:
-                                                        echo link_to('users/habilitar/'.$user->id, 'Hablitar', array('class' => 'btn btn-success'),$secure = null);
-                                                    break;
-                                                    case 1:
-                                                        echo link_to('users/habilitar/'.$user->id, 'Deshabilitar', array('class' => 'btn btn-danger'),$secure = null);
-                                                    break;
-                                                }
-                                            ?>
+                                            @if(($user->rolename == 'Administrador') && ($rolusuario != 'administrador'))
+                                                &nbsp;
+                                            @else
+                                                {{ link_to_action('UserController@edit', 'Editar', array($user->id), array('class' => 'btn btn-info')) }}&nbsp;&nbsp;
+                                                <?php
+                                                    switch ($user->confirmed) {
+                                                        case 0:
+                                                            echo link_to('users/habilitar/'.$user->id, 'Hablitar', array('class' => 'btn btn-success'),$secure = null);
+                                                        break;
+                                                        case 1:
+                                                            echo link_to('users/habilitar/'.$user->id, 'Deshabilitar', array('class' => 'btn btn-danger'),$secure = null);
+                                                        break;
+                                                    }
+                                                ?>
+                                             @endif
                                         </td>
                                         
 				</tr>

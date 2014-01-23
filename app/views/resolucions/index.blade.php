@@ -121,6 +121,9 @@
 					<td>{{{ $resolucion->iniciales }}}</td>
                                         <td>{{{ $resolucion->usuario }}}</td>
                                         <td>
+                                            {{ link_to_route('resolucions.show', 'Detalles', array($resolucion->id), array('class' => 'btn btn-success')) }}
+                                        </td>
+                                        <td>
                                             @if(Auth::user()->hasRole("Administrador") || Auth::user()->hasRole("Jefe - Director"))
                                                 {{ link_to_action('ResolucionsController@edit', 'Editar', array($resolucion->id), array('class' => 'btn btn-info')) }}
                                             @elseif(Auth::user()->id == $resolucion->userid)
@@ -130,7 +133,7 @@
                                         <td>
                                             @if(Auth::user()->hasRole("Administrador") || Auth::user()->hasRole("Jefe - Director"))
                                                 {{ Form::open(array('method' => 'DELETE', 'action' => array('ResolucionsController@destroy', $resolucion->id))) }}
-                                                    {{ Form::submit('Delete', array('class' => 'btn btn-danger', 'onclick' => "return confirm('Esta seguro que desea borrar la resolución Nº $resolucion->numero')")) }}
+                                                    {{ Form::submit('Eliminar', array('class' => 'btn btn-danger', 'onclick' => "return confirm('Esta seguro que desea borrar << $resolucion->documento Nº $resolucion->numero >>')")) }}
                                                 {{ Form::close() }}
                                             @endif
                                         </td>

@@ -72,6 +72,7 @@
 
     <div class="form-actions form-group">
       <button type="submit" class="btn btn-primary">Guardar</button>
+      {{ link_to('users', 'Cancelar', array('class' => 'btn'),$secure = null) }}
     </div>
 </form>
 @stop

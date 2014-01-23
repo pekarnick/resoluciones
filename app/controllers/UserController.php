@@ -47,9 +47,12 @@ class UserController extends BaseController {
         if($control) {
             return Redirect::action($control)->with('message', 'Acceso denegado');
         }
-        $roles = Role::lists('name', 'id');
+        if($this->usuarioactual->hasRole('Administrador')) {
+            $roles = Role::lists('name', 'id');
+        } else {
+            $roles = DB::table('roles')->where('name','<>','Administrador')->lists('name', 'id');
+        }
         $roles = array('' => '--- Seleccione el rol ---') + $roles;
-        unset($roles[4]);
         return View::make('confide.signup', compact('roles'));
     }
 
@@ -80,22 +83,22 @@ class UserController extends BaseController {
         $validation = Validator::make($input, User::$rules);
         
         if ($validation->passes()) {
-            $user = new User;
-            $user->username = Input::get('username');
-            $user->nombre_y_apellido = Input::get('nombre_y_apellido');
-            $user->email = Input::get('email');
-            $user->password = Input::get('password');
-            $user->confirmed = 1;
+            $userr = new User;
+            $userr->username = Input::get('username');
+            $userr->nombre_y_apellido = Input::get('nombre_y_apellido');
+            $userr->email = Input::get('email');
+            $userr->password = Input::get('password');
+            $userr->confirmed = 1;
             // The password confirmation will be removed from model
             // before saving. This field will be used in Ardent's
             // auto validation.
-            $user->password_confirmation = Input::get('password_confirmation');
+            $userr->password_confirmation = Input::get('password_confirmation');
 
             // Save if valid. Password field will be hashed before save
-            $user->save();
+            $userr->save();
             //Asignar roles
 
-            $user->attachRole($rrol);
+            $userr->attachRole($rrol);
         } else {
             return Redirect::action('UserController@create')
 			->withInput()
@@ -103,17 +106,13 @@ class UserController extends BaseController {
 			->with('message', 'Ocurrio un problema cuando se intentó guardar el usuario, inténtelo de nuevo.');
         }
 
-        if ($user->id) {
+        if ($userr->id) {
             // Redirect with success message, You may replace "Lang::get(..." for your custom message.
-                        return Redirect::action('UserController@login')
-                            ->with( 'notice', Lang::get('confide::confide.alerts.account_created') );
+            return Redirect::action('UserController@get_index')->with('message', Lang::get('confide::confide.alerts.account_created') );
         } else {
             // Get validation errors (see Ardent package)
-            $error = $user->errors()->all(':message');
-
-                        return Redirect::action('UserController@create')
-                            ->withInput(Input::except('password'))
-                ->with( 'error', $error );
+            $error = $userr->errors()->all(':message');
+            return Redirect::action('UserController@create')->withInput(Input::except('password'))->with( 'error', $error );
         }
     }
 
@@ -123,6 +122,7 @@ class UserController extends BaseController {
      */
     public function login()
     {
+        Session::forget('busqueda');
         if( Confide::user() )
         {
             // If user is logged, redirect to internal 
@@ -320,7 +320,14 @@ class UserController extends BaseController {
         if (is_null($usuario)){
             return Redirect::action('UserController@get_index');
         }
-        $roles = Role::lists('name', 'id');
+        if(($usuario[0]->rolename == 'Administrador') && (!$this->usuarioactual->hasRole('Administrador'))) {
+            return Redirect::action('UserController@get_index')->with('message', 'No puedes editar un administrador');
+        }
+        if($this->usuarioactual->hasRole('Administrador')) {
+            $roles = Role::lists('name', 'id');
+        } else {
+            $roles = DB::table('roles')->where('name','<>','Administrador')->lists('name', 'id');
+        }
         $roles = array('' => '--- Seleccione el rol ---') + $roles;
         return View::make('confide.edit', compact('usuario', 'roles'));
     }

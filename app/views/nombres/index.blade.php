@@ -40,7 +40,7 @@
 		</tbody>
 	</table>
 @else
-	There are no nombres
+	No existen nombres para mostrar
 @endif
 
 @stop

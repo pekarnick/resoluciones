@@ -411,14 +411,14 @@ h6 {
   color: #ffffff;
 }
 .ui-datepicker td .ui-state-default {
-  padding: 6px;
+  /*padding: 6px;*/
   margin-bottom: 0px;
-  color: #505050;
+  /*color: #505050;*/
   font-size: 11px;
   text-align: center;
-  background: none;
+  /*background: none;*/
   filter: none;
-  border: 0px;
+  /*border: 0px;*/
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;

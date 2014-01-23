@@ -15,7 +15,7 @@ class CreateNombresTable extends Migration {
 		Schema::create('nombres', function(Blueprint $table) {
 			$table->increments('id');
 			$table->string('nombre');
-			$table->enum('documento');
+			$table->enum('documento', array('Resolución','Disposición','Memorándum'));
 			$table->timestamps();
 		});
 	}

@@ -33,6 +33,10 @@ Route::post('user/edit/{id}',              'UserController@update');
 Route::get( 'user/logout',                 'UserController@logout');
 Route::get( 'user/confirm/{code}',         'UserController@getConfirm');
 Route::get( 'user/reset/{token}',          'UserController@getReset');
+// Cabinet routes
+Route::get('upload/data', 'UploadController@data');
+Route::resource( 'upload', 'UploadController',
+        array('except' => array('show', 'edit', 'update', 'destroy')));
 
 //Route::get('build_acl', function() {
 ////    $filas_eliminadas = Permission::where('id','<>','954624')->delete();
@@ -62,22 +66,87 @@ Route::get( 'user/reset/{token}',          'UserController@getReset');
 //        }
 //    }
 //});
+//
 
-App::error(function($exception, $code)
-{
-    switch ($code)
-    {
-        case 403:
-            return Response::view('errors.403', array(), 403);
-            break;
-        case 404:
-            return Response::view('errors.404', array(), 404);
-            break;
-        case 500:
-            return Response::view('errors.500', array(), 500);
-            break;
-        default:
-            return Response::view('errors.default', array(), $code);
-            break;
+Route::get('limpiar_db', function() {
+    $docs = DB::table('resolucions')->get();
+    DB::table('imagenes')->truncate();
+    foreach($docs as $doc) {
+        echo $doc->id.' - '.$doc->archivo;
+        if(file_exists('../public/'.$doc->archivo)){
+            echo " - OK";
+        }
+        else{
+            DB::table('resolucions')->where('id', '=', $doc->id)->delete();
+            echo " - Borrado";
+        }
+        echo "<br>";
+    }
+    if(listar_directorios_ruta("./uploads/")) {
+        echo "<hr />";
+        listar_directorios_ruta("./uploads/");
     }
 });
+
+Route::get('limpiar_archivos', function() {
+    listar_directorios_ruta("./uploads/");
+});
+function listar_directorios_ruta($ruta){
+    // abrir un directorio y listarlo recursivo
+    $docs = DB::table('resolucions')->select('archivo')->get();
+    $docsarray = array();
+    foreach($docs as $doc) {
+        $docsarray[] = './'.$doc->archivo;
+    }
+    if (is_dir($ruta)) {
+        if ($dh = opendir($ruta)) {
+            while (($file = readdir($dh)) !== false) {
+//                echo "<br>Nombre de archivo: $file : Es un: " . filetype($ruta . $file);
+                if (is_dir($ruta . $file) && $file!="." && $file!=".."){
+                    //Listar carpetas
+                    echo "<br>Directorio: $ruta$file";
+                    if(@rmdir($ruta.$file)) {
+                        echo "<br>Directorio eliminado";
+                    }
+                    listar_directorios_ruta($ruta . $file . "/");
+                } elseif($file!="." && $file!="..") {
+                    //Lista archivos
+                    if(in_array($ruta.$file, $docsarray)) {
+                        echo "<br>&nbsp;&nbsp;&nbsp;&nbsp;Archivo: $file - Existe";
+                    } else {
+                        echo "<br>&nbsp;&nbsp;&nbsp;&nbsp;Archivo: $file - No existe el registro";
+                        unlink($ruta.$file);
+                    }
+                }
+            }
+            closedir($dh);
+        }
+    } else {
+        echo "<br>No es ruta valida";
+    }
+    return true;
+}
+
+
+//App::error(function($exception, $code)
+//{
+//    switch ($code)
+//    {
+//        case 403:
+//            return Response::view('errors.403', array(), 403);
+//            break;
+//        case 404:
+//            return Response::view('errors.404', array(), 404);
+//            break;
+//        case 500:
+//            return Response::view('errors.500', array(), 500);
+//            break;
+//        default:
+//            return Response::view('errors.default', array(), $code);
+//            break;
+//    }
+//});
+
+// Adding auth checks for the upload functionality is highly recommended.
+
+

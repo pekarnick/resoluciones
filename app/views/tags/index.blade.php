@@ -28,7 +28,7 @@
                     <td>{{ link_to_route('tags.edit', 'Editar', array($tag->id), array('class' => 'btn btn-info')) }}</td>
                     <td>
                         {{ Form::open(array('method' => 'DELETE', 'route' => array('tags.destroy', $tag->id))) }}
-                            {{ Form::submit('Eliminar', array('class' => 'btn btn-danger')) }}
+                            {{ Form::submit('Eliminar', array('class' => 'btn btn-danger', 'onclick' => "return confirm('Esta seguro que desea borrar el tag << $tag->nombre >>')")) }}
                         {{ Form::close() }}
                     </td>
 				</tr>
